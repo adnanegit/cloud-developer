@@ -14,7 +14,9 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
   app.use(bodyParser.json());
 
 
-
+  // app.get( "/filteredimage", async (req, res)=>{
+  //   res.status(200).send("Hello");
+  // });
   // @TODO1 IMPLEMENT A RESTFUL ENDPOINT
   // GET /filteredimage?image_url={{URL}}
   // endpoint to filter an image from a public url.
@@ -29,15 +31,14 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
   // RETURNS
   //   the filtered image file [!!TIP res.sendFile(filteredpath); might be useful]
 
-  /**************************************************************************** */
-  app.get('/filteredImage', async(req: Request , res : Response) => {
+  app.get( "/filteredimage:image_url", async (request: Request, response: Response)  => {
     //init vars
-    let imageUrl = req.params;
+    let { imageUrl } = request.params.image_url;
     let fileArray = [];
-    
+        
     //test for empty image url
     if(!imageUrl){
-      res.status(400).send('image url is required');
+      response.status(400).send('image url is required');
     }
     
     //call filter img url
@@ -45,7 +46,7 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
 
     //test for empty result
     if(!fileImage){
-      res.status(400).send('image could not be processed at this time');
+      response.status(400).send('image could not be processed at this time');
     }
 
     // add file name to array
@@ -55,7 +56,7 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
     await deleteLocalFiles(fileArray);
 
     //return 200 w/ file name
-    res.status(200).sendFile(fileImage);
+    response.status(200).sendFile(fileImage);
   });
   //! END @TODO1
   
