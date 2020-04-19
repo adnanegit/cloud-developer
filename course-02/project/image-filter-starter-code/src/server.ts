@@ -13,13 +13,6 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
   // Use the body parser middleware for post requests
   app.use(bodyParser.json());
 
-  app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "http://localhost:8082");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-    next();
-  });
-
-
   // app.get( "/filteredimage", async (req, res)=>{
   //   res.status(200).send("Hello");
   // });
@@ -39,7 +32,7 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
 
   app.get( "/filteredimage", async (request: Request, response: Response)  => {
     //init vars
-    let { imageUrl } = request.params;
+    let imageUrl  = String(request.query.image_url);
     response.status(200).send(imageUrl);
     let fileArray = [];
         
