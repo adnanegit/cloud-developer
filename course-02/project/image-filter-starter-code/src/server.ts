@@ -32,8 +32,9 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
 
   app.get( "/filteredimage", async (request: Request, response: Response)  => {
     //init vars
-    let imageUrl  = String(request.query.image_url);
-    response.status(200).send(imageUrl);
+    let imageUrl   = request.query.image_url;
+    imageUrl = imageUrl.toString();
+    
     let fileArray = [];
         
     //test for empty image url
