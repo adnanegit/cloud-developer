@@ -1,5 +1,7 @@
 import fs from 'fs';
 import Jimp from 'jimp';
+import * as path from 'path';
+
 
 // filterImageFromURL
 // helper function to download, filter, and save the filtered image locally
@@ -11,14 +13,21 @@ import Jimp from 'jimp';
 export async function filterImageFromURL(inputURL: string): Promise<string>{
     return new Promise( async resolve => {
         const photo = await Jimp.read(inputURL);
-        const outpath = '/tmp/filtered.'+Math.floor(Math.random() * 2000)+'.jpg';
+        const outpath = path.join('/tmp/','filtered.'+Math.floor(Math.random() * 2000)+'.jpg'); 
+        fs.chmod(path.join(__dirname, outpath),777, ()=>{
+            console.log('chmod success!');
+            console.log(path.join(__dirname,outpath));
+        }) ;
+        
         photo
             .resize(256, 256) // resize
             .quality(60) // set JPEG quality
-            .greyscale() // set greyscale
-            .write(__dirname + outpath, (img) => {
-                resolve(__dirname + outpath);
-            });
+            .greyscale(); // set greyscale
+            /*.write(outpath,(img)=>{
+                resolve(path.join(__dirname,outpath));
+            })*/
+        await photo.writeAsync(path.join(__dirname, outpath));
+        resolve(path.join(__dirname,outpath));
     });
 }
 
@@ -28,7 +37,10 @@ export async function filterImageFromURL(inputURL: string): Promise<string>{
 // INPUTS
 //    files: Array<string> an array of absolute paths to files
 export async function deleteLocalFiles(files:Array<string>){
-    for( let file of files) {
-        fs.unlinkSync(file);
+    if(files && files.length>0){
+        for( let file of files) {
+            fs.unlinkSync(file);
+        }
     }
+    
 }

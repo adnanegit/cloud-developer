@@ -1,6 +1,6 @@
-import express, {Request, Response} from 'express';
+import express, { Request, Response } from 'express';
 import bodyParser from 'body-parser';
-import {filterImageFromURL, deleteLocalFiles} from './util/util';
+import { filterImageFromURL, deleteLocalFiles } from './util/util';
 
 (async () => {
 
@@ -9,7 +9,7 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
 
   // Set the network port
   const port = process.env.PORT || 8082;
-  
+
   // Use the body parser middleware for post requests
   app.use(bodyParser.json());
 
@@ -30,23 +30,23 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
   // RETURNS
   //   the filtered image file [!!TIP res.sendFile(filteredpath); might be useful]
 
-  app.get( "/filteredimage", async (request: Request, response: Response)  => {
+  app.get("/filteredimage", async (request: Request, response: Response) => {
     //init vars
-    let imageUrl   = request.query.image_url;
+    let imageUrl = request.query.image_url;
     imageUrl = imageUrl.toString();
-    
+
     let fileArray = [];
-        
+
     //test for empty image url
-    if(!imageUrl){
+    if (!imageUrl) {
       response.status(400).send('image url is required');
     }
-    
+
     //call filter img url
     let fileImage = await filterImageFromURL(imageUrl);
 
     //test for empty result
-    if(!fileImage){
+    if (!fileImage) {
       response.status(400).send('image could not be processed at this time');
     }
 
@@ -54,23 +54,40 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
     fileArray.push(fileImage);
 
     //delete local files
-    await deleteLocalFiles(fileArray);
+    /*
+    delete is causing a 504 gateway time out
+    <html>
+    <head>
+      <title>504 Gateway Time-out</title>
+    </head>
 
-    //return 200 w/ file name
-    response.status(200).sendFile(fileImage);
+    <body bgcolor="white">
+      <center>
+        <h1>504 Gateway Time-out</h1>
+      </center>
+    </body>
+
+    </html>
+    */
+    //await deleteLocalFiles(fileArray);
+
+    //return 200 w/ file name    
+    response.status(200).sendFile(fileImage, (error) => {
+      console.log(error);
+    });
   });
   //! END @TODO1
-  
+
   // Root Endpoint
   // Displays a simple message to the user
-  app.get( "/", async ( req, res ) => {
+  app.get("/", async (req, res) => {
     res.send("try GET /filteredimage?image_url={{}}")
-  } );
-  
+  });
+
 
   // Start the Server
-  app.listen( port, () => {
-      console.log( `server running http://localhost:${ port }` );
-      console.log( `press CTRL+C to stop server` );
-  } );
+  app.listen(port, () => {
+    console.log(`server running http://localhost:${port}`);
+    console.log(`press CTRL+C to stop server`);
+  });
 })();
