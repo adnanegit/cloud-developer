@@ -13,11 +13,7 @@ import * as path from 'path';
 export async function filterImageFromURL(inputURL: string): Promise<string>{
     return new Promise( async resolve => {
         const photo = await Jimp.read(inputURL);
-        const outpath = path.join('/tmp/','filtered.'+Math.floor(Math.random() * 2000)+'.jpg'); 
-        fs.chmod(path.join(__dirname, outpath),777, ()=>{
-            console.log('chmod success!');
-            console.log(path.join(__dirname,outpath));
-        }) ;
+        const outpath = path.join('/tmp/','filtered.'+Math.floor(Math.random() * 2000)+'.jpg');       
         
         photo
             .resize(256, 256) // resize
@@ -38,8 +34,24 @@ export async function filterImageFromURL(inputURL: string): Promise<string>{
 //    files: Array<string> an array of absolute paths to files
 export async function deleteLocalFiles(files:Array<string>){
     if(files && files.length>0){
+        for( let file of files) {            
+            if(fs.existsSync(file)){
+                fs.unlinkSync(file);                
+                var fileIndex = files.indexOf(file);
+                files.splice(fileIndex,1);
+            }
+        }
+    } 
+}
+
+export async function cleanup(files:Array<string>):Promise<void>{
+    if(files && files.length>0){
         for( let file of files) {
-            fs.unlinkSync(file);
+            fs.exists(file, () => {
+                fs.unlinkSync(file);
+                var fileIndex = files.indexOf(file);
+                files.splice(fileIndex, 1);
+            });                        
         }
     }
     
