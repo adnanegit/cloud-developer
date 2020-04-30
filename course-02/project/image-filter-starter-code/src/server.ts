@@ -60,7 +60,7 @@ import { filterImageFromURL, deleteLocalFiles, cleanup } from './util/util';
 
 
   app.post('/cleanup', async(req, res) => {
-    await deleteLocalFiles(fileArray);    
+    await cleanup(fileArray);    
     res.json({message:'success',array:fileArray});
   });
   // Root Endpoint
