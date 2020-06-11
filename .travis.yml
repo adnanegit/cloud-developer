@@ -1,0 +1,20 @@
+language: node_js
+node_js:
+  - 13
+
+services:
+  - docker
+
+# Pre-testing installs
+install:
+  - echo "nothing needs to be installed"
+
+# Scripts to be run such as tests
+before_script:
+  - echo "no tests"
+
+script:
+  - npm run build
+  - docker --version # print the version for logging
+  - docker build -t udagram-udacityc3frontend .
+  - docker tag udagram-udacityc3frontend lucness/udagram-udacityc3frontend:latest
