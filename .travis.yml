@@ -16,5 +16,5 @@ before_script:
 script:
   #- npm run build
   - docker --version # print the version for logging
-  - docker build -t udagram-udacityc3frontend .
+  - docker build -t lucness/udagram-udacityc3frontend .
   - docker tag udagram-udacityc3frontend lucness/udagram-udacityc3frontend:latest
